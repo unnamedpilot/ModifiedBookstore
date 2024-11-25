@@ -12,9 +12,9 @@ const app = express();
 
 const PORT = process.env.PORT || 5001;
 
-app.use('/api/books/', bookRoutes)
+app.use('/api', bookRoutes)
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running in ${process.env.NODE_ENV} and listening on PORT ${PORT}`.blue)
   })
 

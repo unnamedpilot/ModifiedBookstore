@@ -1,0 +1,40 @@
+// models/Book.js
+import mongoose from 'mongoose';
+
+const bookSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  titulo: {
+    type: String,
+    required: true,
+  },
+  autor: {
+    type: String,
+    required: true,
+  },
+  editorial: {
+    type: String,
+    required: true,
+  },
+  anio: {
+    type: Number,
+    required: true,
+  },
+  descripcion: {
+    type: String,
+  },
+  precio: {
+    type: Number,
+    required: true,
+  },
+  portada: {
+    type: String,
+  },
+});
+
+const Book = mongoose.model('Book', bookSchema);
+
+export default Book;

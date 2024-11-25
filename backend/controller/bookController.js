@@ -1,72 +1,30 @@
-
-
-import { fromEnv } from "@aws-sdk/credential-providers";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
-
-import dotenv from "dotenv";
- 
-dotenv.config()
+import Book from '../models/Book.js';
 
 const getBooks = async (req, res) => {
-  
-  if (process.env.NODE_ENV == 'production'){
-    var client = new DynamoDBClient({ 
-      region: process.env.AWS_REGION, 
-    });
-  }else{
-    var client = new DynamoDBClient({ 
-      region: process.env.AWS_REGION, 
-      credentials: fromEnv() 
-    });
+  try {
+    const books = await Book.find({});
+    res.json(books);
+  } catch (error) {
+    console.error('Error al obtener libros:', error);
+    res.status(500).json({ message: 'Error al obtener libros' });
   }
-
-  const docClient = DynamoDBDocumentClient.from(client);
-  const command = new ScanCommand({
-    TableName: "tb_books",
-  });
-
-  const response = await docClient.send(command);
-
-  const books = [];
-  for (var i in response.Items) {
-    books.push(response.Items[i]);
-  }
-
-  res.contentType = 'application/json';
-  console.log(books);
-  res.json(books);
-
-  return res;
-
 };
+
+export { getBooks };
 
 const getBooksById = async (req, res) => {
-
-  if (process.env.NODE_ENV == 'production'){
-    var client = new DynamoDBClient({ 
-      region: process.env.AWS_REGION, 
-    });
-  }else{
-    var client = new DynamoDBClient({ 
-      region: process.env.AWS_REGION, 
-      credentials: fromEnv() 
-    });
+  try {
+    const book = await Book.findOne({ id: req.params.id });
+    if (book) {
+      res.json(book);
+    } else {
+      res.status(404).json({ message: 'Libro no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al obtener el libro:', error);
+    res.status(500).json({ message: 'Error al obtener el libro' });
   }
-
-  const docClient = DynamoDBDocumentClient.from(client);
-
-  const command = new GetCommand({
-    TableName: "tb_books",
-    Key: {
-      id: req.params.id,
-    },
-  });
-
-  const response = await docClient.send(command);
-  console.log(response.Item);
-  res.json(response.Item)
-  return res;
 };
 
-export { getBooksById, getBooks }
+export { getBooksById };
+
